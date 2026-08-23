@@ -643,6 +643,79 @@
       max-width: 90%; text-align: center;
     }
 
+    /* Videos */
+    .videos {
+      background:
+        radial-gradient(700px 380px at 50% 0%, rgba(212,175,97,0.08), transparent 55%),
+        #110e0c;
+    }
+    .video-stage {
+      display: grid; gap: 1rem;
+    }
+    @media (min-width: 900px) {
+      .video-stage { grid-template-columns: 1.55fr 0.85fr; gap: 1.25rem; align-items: stretch; }
+    }
+    .video-main {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+      box-shadow: var(--shadow);
+      aspect-ratio: 9 / 16;
+      max-height: min(72vh, 720px);
+      margin: 0 auto;
+      width: 100%;
+    }
+    @media (min-width: 900px) {
+      .video-main {
+        aspect-ratio: 9 / 16;
+        max-height: 640px;
+        width: min(100%, 380px);
+        justify-self: end;
+      }
+    }
+    .video-main video {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .video-thumbs {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
+      align-content: start;
+    }
+    @media (min-width: 900px) {
+      .video-thumbs { grid-template-columns: 1fr 1fr; }
+    }
+    .video-thumb {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      padding: 0; background: #151210;
+      cursor: pointer;
+      aspect-ratio: 9 / 16;
+      transition: border-color 0.25s, transform 0.25s var(--ease), box-shadow 0.25s;
+    }
+    .video-thumb video {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      pointer-events: none;
+    }
+    .video-thumb::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(transparent 45%, rgba(8,6,4,0.85));
+      pointer-events: none;
+    }
+    .video-thumb span {
+      position: absolute; left: 0.7rem; right: 0.7rem; bottom: 0.7rem; z-index: 1;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+      text-align: left; color: var(--text);
+    }
+    .video-thumb.is-active {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(212,175,97,0.35), 0 12px 30px rgba(0,0,0,0.35);
+    }
+    .video-thumb:hover { transform: translateY(-2px); border-color: rgba(212,175,97,0.45); }
+    .video-actions { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
     /* Training */
     .training {
       background:
@@ -973,6 +1046,7 @@
       <ul class="nav-links">
         <li><a href="#courses">Courses</a></li>
         <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#videos">Videos</a></li>
         <li><a href="#careers">Careers</a></li>
         <li><a href="#location">Location</a></li>
       </ul>
@@ -986,6 +1060,7 @@
     <div class="nav-mobile" id="navMobile">
       <a href="#courses">Courses</a>
       <a href="#gallery">Gallery</a>
+      <a href="#videos">Videos</a>
       <a href="#careers">Careers</a>
       <a href="#location">Location</a>
       <a href="#register">Register</a>
@@ -1128,8 +1203,49 @@
       </div>
 
       <div class="gallery-actions reveal">
-        <a class="btn btn-outline magnetic" href="https://www.tiktok.com/@ppks.official" target="_blank" rel="noopener noreferrer">Watch more on TikTok @ppks.official</a>
+        <a class="btn btn-outline magnetic" href="#videos">Watch kitchen videos</a>
+        <a class="btn btn-outline magnetic" href="https://www.tiktok.com/@ppks.official" target="_blank" rel="noopener noreferrer">More on TikTok @ppks.official</a>
         <a class="btn btn-wa btn-sm magnetic" id="galleryWa" href="#">WhatsApp us</a>
+      </div>
+    </section>
+
+    <section class="videos" id="videos">
+      <div class="section-inner">
+        <p class="eyebrow reveal">Kitchen clips</p>
+        <h2 class="section-title reveal">See the training in motion</h2>
+        <div class="rule reveal"></div>
+        <p class="section-lead reveal">Short clips from real PPKS classes and kitchens. Tap a thumbnail to play — sound on when you’re ready.</p>
+
+        <div class="video-stage reveal">
+          <div class="video-main">
+            <video id="mainVideo" controls playsinline preload="metadata" poster="assets/hero-training.png">
+              <source src="assets/videos/clip-01.mp4" type="video/mp4" />
+            </video>
+          </div>
+          <div class="video-thumbs" id="videoThumbs" role="list">
+            <button type="button" class="video-thumb is-active" data-src="assets/videos/clip-01.mp4" aria-label="Play clip 1">
+              <video muted playsinline preload="metadata" src="assets/videos/clip-01.mp4"></video>
+              <span>Clip 1</span>
+            </button>
+            <button type="button" class="video-thumb" data-src="assets/videos/clip-02.mp4" aria-label="Play clip 2">
+              <video muted playsinline preload="metadata" src="assets/videos/clip-02.mp4"></video>
+              <span>Clip 2</span>
+            </button>
+            <button type="button" class="video-thumb" data-src="assets/videos/clip-03.mp4" aria-label="Play clip 3">
+              <video muted playsinline preload="metadata" src="assets/videos/clip-03.mp4"></video>
+              <span>Clip 3</span>
+            </button>
+            <button type="button" class="video-thumb" data-src="assets/videos/clip-04.mp4" aria-label="Play clip 4">
+              <video muted playsinline preload="metadata" src="assets/videos/clip-04.mp4"></video>
+              <span>Clip 4</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="video-actions reveal">
+          <a class="btn btn-outline magnetic" href="https://www.tiktok.com/@ppks.official" target="_blank" rel="noopener noreferrer">Follow @ppks.official</a>
+          <a class="btn btn-wa magnetic" id="videoWa" href="#">WhatsApp about a class visit</a>
+        </div>
       </div>
     </section>
 
@@ -1425,6 +1541,7 @@ Style: warm, concise, professional culinary-school voice. Prefer short answers. 
       setWa(document.getElementById("heroWa"), WA_ANG, DEFAULT_MSG);
       setWa(document.getElementById("floatWa"), WA_ANG, DEFAULT_MSG);
       setWa(document.getElementById("galleryWa"), WA_ANG, DEFAULT_MSG);
+      setWa(document.getElementById("videoWa"), WA_ANG, "Hi Chef Ang, I'd like to visit a PPKS class / see training in person.");
       setWa(document.getElementById("careerWa"), WA_ANG, "Hi Chef Ang, I'd like to know more about 5-star hotel placements at PPKS.");
       setWa(document.getElementById("promoWa"), WA_ANG, "Hi, I'm asking about the 50% discount for the first 5 registrations.");
       setWa(document.getElementById("locWa"), WA_ANG, DEFAULT_MSG);
@@ -1610,6 +1727,26 @@ Style: warm, concise, professional culinary-school voice. Prefer short answers. 
           if (!reduceMotion) timer = setInterval(next, 5200);
         }
         restart();
+      })();
+
+      /* Video clip switcher */
+      (function () {
+        var main = document.getElementById("mainVideo");
+        var thumbs = document.querySelectorAll(".video-thumb");
+        if (!main || !thumbs.length) return;
+        thumbs.forEach(function (thumb) {
+          thumb.addEventListener("click", function () {
+            var src = thumb.getAttribute("data-src");
+            if (!src) return;
+            thumbs.forEach(function (t) { t.classList.remove("is-active"); });
+            thumb.classList.add("is-active");
+            main.pause();
+            main.querySelector("source").src = src;
+            main.load();
+            var playPromise = main.play();
+            if (playPromise && playPromise.catch) playPromise.catch(function () {});
+          });
+        });
       })();
 
       /* Lightbox for marquee */
