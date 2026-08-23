@@ -206,12 +206,37 @@
     }
     .hero-bg {
       position: absolute; inset: -14% 0;
-      background:
-        linear-gradient(105deg, rgba(14,12,10,0.88) 0%, rgba(14,12,10,0.45) 42%, rgba(14,12,10,0.2) 65%, rgba(14,12,10,0.75) 100%),
-        linear-gradient(180deg, rgba(14,12,10,0.25) 0%, rgba(14,12,10,0.15) 40%, rgba(14,12,10,0.95) 100%),
-        url("assets/hero-training.png") center/cover no-repeat;
       will-change: transform;
       transform: scale(1.08);
+    }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 1.4s var(--ease);
+    }
+    .hero-slide.is-active { opacity: 1; z-index: 0; }
+    .hero-slide::after {
+      content: ""; position: absolute; inset: 0;
+      background:
+        linear-gradient(105deg, rgba(14,12,10,0.88) 0%, rgba(14,12,10,0.45) 42%, rgba(14,12,10,0.2) 65%, rgba(14,12,10,0.75) 100%),
+        linear-gradient(180deg, rgba(14,12,10,0.25) 0%, rgba(14,12,10,0.15) 40%, rgba(14,12,10,0.95) 100%);
+    }
+    .hero-dots {
+      position: absolute; z-index: 2; left: 1.25rem; bottom: 1.25rem;
+      display: flex; gap: 0.45rem;
+    }
+    @media (min-width: 900px) {
+      .hero-dots { left: 2.5rem; bottom: 1.75rem; }
+    }
+    .hero-dots button {
+      width: 8px; height: 8px; border-radius: 50%; border: 0;
+      background: rgba(247,242,232,0.35); padding: 0; cursor: pointer;
+      transition: transform 0.25s, background 0.25s, width 0.25s;
+    }
+    .hero-dots button.is-active {
+      background: var(--gold); width: 22px; border-radius: 999px;
     }
     .hero-content {
       position: relative; z-index: 1;
@@ -321,29 +346,41 @@
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; transition: none; }
       .hero-content > * { opacity: 1; transform: none; animation: none; }
+      .course-badge { animation: none; }
+      .price-new { animation: none; }
       html { scroll-behavior: auto; }
     }
 
-    /* Courses */
+    /* Courses — premium pricing */
     .courses {
       background:
         radial-gradient(700px 400px at 80% 0%, rgba(212,175,97,0.07), transparent 60%),
         linear-gradient(180deg, transparent, rgba(22,19,16,0.6));
     }
-    .course-grid { display: grid; gap: 1.35rem; }
+    .course-grid { display: grid; gap: 1.5rem; }
     @media (min-width: 800px) {
-      .course-grid { grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+      .course-grid { grid-template-columns: 1fr 1fr; gap: 1.75rem; align-items: stretch; }
     }
     .course-card {
       position: relative;
-      background: linear-gradient(165deg, rgba(40,35,30,0.9), rgba(24,21,18,0.85));
+      display: flex; flex-direction: column;
+      background:
+        linear-gradient(180deg, rgba(48,42,36,0.55) 0%, transparent 28%),
+        linear-gradient(165deg, rgba(40,35,30,0.95), rgba(18,15,12,0.92));
       border: 1px solid var(--line);
-      border-radius: calc(var(--radius) + 4px);
-      padding: 2rem 1.65rem 1.65rem;
+      border-radius: 22px;
+      padding: 1.85rem 1.65rem 1.65rem;
       transform-style: preserve-3d;
-      transition: border-color 0.35s, box-shadow 0.35s;
+      transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
       overflow: hidden;
-      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    .course-card.featured {
+      border-color: rgba(212,175,97,0.45);
+      box-shadow:
+        0 0 0 1px rgba(212,175,97,0.12),
+        0 24px 60px rgba(0,0,0,0.4),
+        0 0 80px rgba(212,175,97,0.08);
     }
     .course-card::before {
       content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -353,109 +390,258 @@
     .course-card::after {
       content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
       padding: 1px;
-      background: linear-gradient(145deg, rgba(212,175,97,0.35), transparent 40%, transparent 60%, rgba(194,75,66,0.2));
+      background: linear-gradient(145deg, rgba(212,175,97,0.45), transparent 38%, transparent 62%, rgba(194,75,66,0.22));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor; mask-composite: exclude;
-      opacity: 0.7;
+      opacity: 0.85;
     }
     .course-card:hover {
-      border-color: rgba(212,175,97,0.28);
-      box-shadow: 0 24px 50px rgba(0,0,0,0.35);
+      border-color: rgba(212,175,97,0.35);
+      box-shadow: 0 28px 60px rgba(0,0,0,0.42);
     }
     .course-card:hover::before, .course-card:focus-within::before { opacity: 1; }
+    .course-badge {
+      position: absolute; top: 1.15rem; right: 1.15rem; z-index: 2;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.4rem 0.7rem; border-radius: 999px;
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+      color: #1a140c;
+      animation: badgePulse 2.8s ease-in-out infinite;
+    }
+    .course-badge.alt {
+      background: rgba(247,242,232,0.08);
+      color: var(--gold-soft);
+      border: 1px solid var(--line-gold);
+      animation: none;
+    }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,97,0.45); }
+      50% { box-shadow: 0 0 0 8px rgba(212,175,97,0); }
+    }
     .course-card h3 {
-      font-family: var(--font-display); font-size: 1.85rem; margin: 0 0 0.4rem;
-      letter-spacing: -0.02em;
+      font-family: var(--font-display); font-size: 1.9rem; margin: 0 0 0.4rem;
+      letter-spacing: -0.02em; padding-right: 5.5rem;
     }
     .course-meta {
-      font-size: 0.86rem; color: var(--text-muted); margin-bottom: 1.35rem; line-height: 1.55;
+      font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.35rem; line-height: 1.55;
+    }
+    .price-panel {
+      position: relative;
+      margin-bottom: 1.45rem; padding: 1.15rem 1.15rem 1.05rem;
+      border-radius: 16px;
+      background:
+        radial-gradient(120% 120% at 100% 0%, rgba(194,75,66,0.18), transparent 50%),
+        rgba(0,0,0,0.28);
+      border: 1px solid rgba(247,242,232,0.1);
+      overflow: hidden;
+    }
+    .price-panel.gold {
+      background:
+        radial-gradient(120% 120% at 100% 0%, rgba(212,175,97,0.2), transparent 55%),
+        rgba(0,0,0,0.28);
+    }
+    .price-panel-label {
+      font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-muted); font-weight: 600; margin: 0 0 0.55rem;
     }
     .price-row {
-      display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap;
-      margin-bottom: 1.4rem; padding: 0.85rem 1rem;
-      background: rgba(0,0,0,0.22); border-radius: var(--radius-sm);
-      border: 1px solid var(--line);
+      display: flex; align-items: baseline; gap: 0.65rem; flex-wrap: wrap;
     }
     .price-old {
-      text-decoration: line-through; color: var(--text-muted); font-size: 0.95rem;
+      text-decoration: line-through; color: rgba(168,159,146,0.75); font-size: 1.05rem; font-weight: 500;
     }
     .price-new {
-      font-family: var(--font-display); font-size: 2.15rem; color: var(--accent-bright); font-weight: 700;
-      letter-spacing: -0.02em;
+      font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 2.75rem);
+      color: var(--accent-bright); font-weight: 700;
+      letter-spacing: -0.03em; line-height: 1;
+      animation: priceGlow 3s ease-in-out infinite;
     }
     .price-earned {
-      font-family: var(--font-display); font-size: 1.7rem !important;
-      color: var(--gold) !important; font-weight: 700;
+      color: var(--gold) !important;
+      animation: none;
     }
-    .price-note { font-size: 0.8rem; color: var(--gold-soft); font-weight: 500; }
+    @keyframes priceGlow {
+      0%, 100% { text-shadow: 0 0 0 transparent; }
+      50% { text-shadow: 0 0 24px rgba(194, 75, 66, 0.35); }
+    }
+    .price-save {
+      display: inline-flex; align-items: center;
+      margin-top: 0.75rem;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      color: #1a140c;
+      background: linear-gradient(135deg, #f0d28a, var(--gold));
+      padding: 0.35rem 0.7rem; border-radius: 999px;
+    }
+    .price-note {
+      display: block; margin-top: 0.55rem;
+      font-size: 0.82rem; color: var(--gold-soft); font-weight: 500;
+    }
     .course-list {
       list-style: none; margin: 0 0 1.6rem; padding: 0;
-      display: grid; gap: 0.7rem;
+      display: grid; gap: 0.75rem;
+      flex: 1;
     }
     .course-list li {
-      position: relative; padding-left: 1.2rem;
+      position: relative; padding-left: 1.55rem;
       font-size: 0.92rem; color: var(--text-muted); line-height: 1.5;
     }
     .course-list li::before {
-      content: ""; position: absolute; left: 0; top: 0.55em;
-      width: 7px; height: 7px; border-radius: 50%;
-      border: 1px solid var(--gold); background: transparent;
+      content: ""; position: absolute; left: 0; top: 0.28em;
+      width: 1rem; height: 1rem; border-radius: 50%;
+      background:
+        linear-gradient(135deg, var(--gold-soft), var(--gold)) center/6px 6px no-repeat,
+        rgba(212,175,97,0.15);
+      box-shadow: inset 0 0 0 1px rgba(212,175,97,0.45);
     }
+    .course-card .btn { width: 100%; margin-top: auto; }
     .promo-banner {
       margin-top: 2rem;
       border: 1px solid var(--line-gold);
-      border-radius: var(--radius);
-      padding: 1.25rem 1.4rem;
+      border-radius: 18px;
+      padding: 1.35rem 1.5rem;
       display: flex; flex-wrap: wrap; gap: 0.85rem 1.5rem; align-items: center; justify-content: space-between;
       background:
-        linear-gradient(120deg, rgba(212,175,97,0.1), transparent 55%),
-        rgba(32, 28, 24, 0.55);
+        linear-gradient(120deg, rgba(212,175,97,0.14), transparent 55%),
+        rgba(32, 28, 24, 0.65);
+      position: relative; overflow: hidden;
     }
-    .promo-banner p { margin: 0; color: var(--text-muted); font-size: 0.95rem; max-width: 56ch; }
+    .promo-banner::before {
+      content: ""; position: absolute; inset: auto -20% -60% auto; width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(212,175,97,0.2), transparent 65%);
+      pointer-events: none;
+    }
+    .promo-banner p { margin: 0; color: var(--text-muted); font-size: 0.98rem; max-width: 56ch; position: relative; }
     .promo-banner strong { color: var(--gold-soft); }
 
-    /* Gallery */
-    .gallery { background: transparent; }
-    .gallery-scroll {
-      display: flex; gap: 1.1rem; overflow-x: auto; padding: 0.35rem 0 1.25rem;
-      scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin; scrollbar-color: rgba(212,175,97,0.35) transparent;
-    }
-    .gallery-scroll::-webkit-scrollbar { height: 4px; }
-    .gallery-scroll::-webkit-scrollbar-thumb {
-      background: rgba(212,175,97,0.35); border-radius: 4px;
-    }
-    .gallery-item {
-      flex: 0 0 min(78vw, 300px);
-      scroll-snap-align: start;
-      position: relative;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+    /* Gallery — dual marquee */
+    .gallery {
+      background: transparent;
+      padding-left: 0; padding-right: 0;
       overflow: hidden;
-      aspect-ratio: 4/5;
-      transform-style: preserve-3d;
-      box-shadow: 0 18px 40px rgba(0,0,0,0.3);
     }
-    .gallery-item:nth-child(even) { flex-basis: min(72vw, 270px); aspect-ratio: 3/4; }
-    .gallery-item img {
+    .gallery .section-inner { padding: 0 1.25rem; }
+    @media (min-width: 900px) {
+      .gallery .section-inner { padding: 0 2.5rem; }
+    }
+    .marquee {
+      margin-top: 0.5rem;
+      display: grid; gap: 0.85rem;
+    }
+    .marquee-row {
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    }
+    .marquee-track {
+      display: flex; width: max-content; gap: 0.85rem;
+      will-change: transform;
+    }
+    .marquee-row--left .marquee-track {
+      animation: marqueeLeft 55s linear infinite;
+    }
+    .marquee-row--right .marquee-track {
+      animation: marqueeRight 60s linear infinite;
+    }
+    .marquee-row:hover .marquee-track {
+      animation-play-state: paused;
+    }
+    @keyframes marqueeLeft {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @keyframes marqueeRight {
+      from { transform: translateX(-50%); }
+      to { transform: translateX(0); }
+    }
+    .marquee-item {
+      flex: 0 0 auto;
+      width: min(72vw, 280px);
+      aspect-ratio: 4 / 5;
+      border: 0; padding: 0; background: transparent;
+      border-radius: 16px; overflow: hidden;
+      position: relative;
+      cursor: zoom-in;
+      box-shadow: 0 14px 36px rgba(0,0,0,0.35);
+      border: 1px solid var(--line);
+    }
+    .marquee-row--right .marquee-item {
+      width: min(68vw, 250px);
+      aspect-ratio: 3 / 4;
+    }
+    .marquee-item img {
       width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.8s var(--ease);
+      display: block;
+      transition: transform 0.55s var(--ease);
     }
-    .gallery-item:hover img { transform: scale(1.06); }
-    .gallery-item::after {
-      content: ""; position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(212,175,97,0.16), transparent 60%);
-      opacity: 0; transition: opacity 0.3s;
-    }
-    .gallery-item:hover::after { opacity: 1; }
-    .gallery-caption {
+    .marquee-item::after {
+      content: attr(data-caption);
       position: absolute; left: 0; right: 0; bottom: 0;
-      padding: 2rem 1.1rem 1.1rem;
-      background: linear-gradient(transparent, rgba(10,8,6,0.92));
-      font-size: 0.86rem; color: var(--text); font-weight: 500;
+      padding: 2rem 0.9rem 0.85rem;
+      background: linear-gradient(transparent, rgba(8,6,4,0.9));
+      color: var(--text); font-size: 0.78rem; font-weight: 500;
+      text-align: left; opacity: 0.92;
+      pointer-events: none;
     }
-    .gallery-actions { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    @media (hover: hover) and (pointer: fine) {
+      .marquee-item:hover img { transform: scale(1.08); }
+      .marquee-item:hover { z-index: 2; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-row--left .marquee-track,
+      .marquee-row--right .marquee-track {
+        animation: none;
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: var(--max);
+        margin: 0 auto;
+        justify-content: center;
+      }
+      .marquee-row--left .marquee-track .marquee-item:nth-child(n+7),
+      .marquee-row--right .marquee-track .marquee-item:nth-child(n+7) {
+        display: none;
+      }
+      .marquee-row:hover .marquee-track { animation-play-state: running; }
+    }
+    .gallery-actions {
+      margin-top: 1.75rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+      padding: 0 1.25rem;
+      max-width: var(--max); margin-left: auto; margin-right: auto;
+    }
+    @media (min-width: 900px) {
+      .gallery-actions { padding: 0 2.5rem; }
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 12000;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(6, 5, 4, 0.88);
+      backdrop-filter: blur(10px);
+      padding: 1.25rem;
+    }
+    .lightbox.open { display: flex; animation: panelIn 0.3s var(--ease); }
+    .lightbox[hidden] { display: none !important; }
+    .lightbox img {
+      max-width: min(960px, 100%);
+      max-height: min(86vh, 900px);
+      object-fit: contain;
+      border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+      border: 1px solid var(--line);
+    }
+    .lightbox-close {
+      position: absolute; top: 1rem; right: 1rem;
+      width: 44px; height: 44px; border-radius: 12px;
+      border: 1px solid var(--line); background: rgba(20,17,14,0.9);
+      color: var(--text); font-size: 1.2rem;
+    }
+    .lightbox-caption {
+      position: absolute; left: 50%; bottom: 1.25rem;
+      transform: translateX(-50%);
+      color: var(--text-muted); font-size: 0.85rem;
+      max-width: 90%; text-align: center;
+    }
 
     /* Training */
     .training {
@@ -808,7 +994,12 @@
 
   <main>
     <section class="hero" id="hero" aria-label="Hero">
-      <div class="hero-bg" data-parallax="0.35" aria-hidden="true"></div>
+      <div class="hero-bg" data-parallax="0.35" aria-hidden="true">
+        <div class="hero-slide is-active" style="background-image:url('assets/hero-training.png')"></div>
+        <div class="hero-slide" style="background-image:url('assets/training-pouring.png')"></div>
+        <div class="hero-slide" style="background-image:url('assets/training-mixer-blue.png')"></div>
+        <div class="hero-slide" style="background-image:url('assets/training-grating.png')"></div>
+      </div>
       <div class="hero-content">
         <p class="hero-brand">PPKS<em>Baking &amp; Cooking Academy · Est. 1999</em></p>
         <h1>Train Like a Chef. Graduate Job-Ready.</h1>
@@ -818,6 +1009,7 @@
           <a class="btn btn-outline magnetic" href="#courses">See Courses</a>
         </div>
       </div>
+      <div class="hero-dots" id="heroDots" aria-label="Hero slides"></div>
     </section>
 
     <div class="trust" role="region" aria-label="Trust signals">
@@ -837,36 +1029,47 @@
         <p class="section-lead reveal">Two equal career tracks — Malaysian SKM certification, or the UK Diploma route with a paid practical year.</p>
 
         <div class="course-grid">
-          <article class="course-card tilt reveal" tabindex="0">
+          <article class="course-card featured tilt reveal" tabindex="0">
+            <span class="course-badge">Promo · Save 47%</span>
             <p class="eyebrow">Course A</p>
             <h3>1-Year SKM Course</h3>
             <p class="course-meta">6 months at the academy + 6 months at a bakery or 5-star hotel · 5 days/week</p>
-            <div class="price-row">
-              <span class="price-old">RM17,500</span>
-              <span class="price-new">RM9,250</span>
-              <span class="price-note">Current promo</span>
+            <div class="price-panel">
+              <p class="price-panel-label">Tuition</p>
+              <div class="price-row">
+                <span class="price-old">RM17,500</span>
+                <span class="price-new">RM9,250</span>
+              </div>
+              <span class="price-save">Limited promo price</span>
+              <span class="price-note">Includes uniform, ingredients, notes &amp; exam fees</span>
             </div>
             <ul class="course-list">
-              <li>Includes chef’s shirt, apron, cap, all ingredients &amp; notes, examination fees</li>
-              <li>Certificates: SKM Level 1, SKM Level 2, PPKS Professional Certificates Level 1–3</li>
+              <li>Chef’s shirt, apron, cap included</li>
+              <li>All ingredients &amp; notes + examination fees</li>
+              <li>Certificates: SKM Level 1 &amp; 2 + PPKS Professional Certificates Level 1–3</li>
               <li>No SPM requirement · Unlimited age · 5-star hotel placement guaranteed</li>
             </ul>
             <a class="btn btn-gold magnetic course-wa" href="#" data-course="1-Year SKM Course">WhatsApp about this course</a>
           </article>
 
           <article class="course-card tilt reveal" tabindex="0">
+            <span class="course-badge alt">Earn while you train</span>
             <p class="eyebrow">Course B</p>
             <h3>2-Year UK Diploma Track</h3>
             <p class="course-meta">1 year at the academy + 1 year paid practical at a 5-star hotel</p>
-            <div class="price-row">
-              <span class="price-new price-earned">RM18,000 earned</span>
-              <span class="price-note">during year two (RM1,500/month × 12)</span>
+            <div class="price-panel gold">
+              <p class="price-panel-label">Year-two practical allowance</p>
+              <div class="price-row">
+                <span class="price-new price-earned">RM18,000</span>
+              </div>
+              <span class="price-note">RM1,500/month × 12 months earned during placement</span>
+              <span class="price-note" style="margin-top:0.25rem;color:var(--text-muted)">Tuition: ask Chef Ang for current pricing</span>
             </div>
             <ul class="course-list">
               <li>Diploma / Advanced Diploma in Patisserie or Culinary Arts (Warnborough College UK)</li>
               <li>Alongside SKM Level 3</li>
-              <li>Tuition: ask for current pricing via WhatsApp</li>
-              <li>Placement partners include Hilton Kota Kinabalu &amp; Le Meridien Kota Kinabalu</li>
+              <li>Paid practical year at a 5-star hotel</li>
+              <li>Placement partners: Hilton Kota Kinabalu &amp; Le Meridien Kota Kinabalu</li>
             </ul>
             <a class="btn btn-gold magnetic course-wa" href="#" data-course="2-Year UK Diploma Course">WhatsApp about this course</a>
           </article>
@@ -884,39 +1087,49 @@
         <p class="eyebrow reveal">What you’ll learn</p>
         <h2 class="section-title reveal">From classroom to plate</h2>
         <div class="rule reveal"></div>
-        <p class="section-lead reveal">Real student work and kitchen sessions — pastry, bread, and culinary craft from our Kota Kinabalu kitchens.</p>
+        <p class="section-lead reveal">Real student kitchens and finished work — auto-scrolling so you can sit back and watch. Hover a row to pause; click any photo to enlarge.</p>
+      </div>
 
-        <div class="gallery-scroll" aria-label="Photo gallery">
-          <figure class="gallery-item tilt reveal">
-            <img src="assets/flyer-promo.png" alt="PPKS student dishes including chocolate mousse cake, baguettes, plated chicken, and kitchen training" loading="lazy" />
-            <figcaption class="gallery-caption">Pastry, bread &amp; plated dishes from the academy</figcaption>
-          </figure>
-          <figure class="gallery-item tilt reveal">
-            <img src="assets/flyer-courses.png" alt="PPKS kitchen training and food gallery including cakes, sushi bento, and culinary plating" loading="lazy" />
-            <figcaption class="gallery-caption">SKM &amp; international course kitchen work</figcaption>
-          </figure>
-          <figure class="gallery-item tilt reveal">
-            <img src="assets/hero-training.png" alt="Chef instructor guiding students zesting lemon beside a pink KitchenAid stand mixer" loading="lazy" />
-            <figcaption class="gallery-caption">Hands-on pastry technique with chef supervision</figcaption>
-          </figure>
-          <figure class="gallery-item tilt reveal">
-            <img src="assets/training-pouring.png" alt="PPKS students in chef whites measuring and pouring ingredients at a stainless steel station" loading="lazy" />
-            <figcaption class="gallery-caption">Small-class station work</figcaption>
-          </figure>
-          <figure class="gallery-item tilt reveal">
-            <img src="assets/training-mixer-blue.png" alt="Students collaborating around a prep table with stand mixer and citrus zesting" loading="lazy" />
-            <figcaption class="gallery-caption">Collaborative baking practice</figcaption>
-          </figure>
-          <figure class="gallery-item tilt reveal">
-            <img src="assets/training-grating.png" alt="Culinary students in white chef coats grating lemon zest during a training session" loading="lazy" />
-            <figcaption class="gallery-caption">Precision prep skills</figcaption>
-          </figure>
+      <div class="marquee reveal" aria-label="Photo gallery marquee">
+        <div class="marquee-row marquee-row--left">
+          <div class="marquee-track">
+            <button type="button" class="marquee-item" data-caption="Chef-led pastry technique" data-full="assets/hero-training.png"><img src="assets/hero-training.png" alt="Chef instructor guiding students with a KitchenAid mixer" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Small-class station work" data-full="assets/training-pouring.png"><img src="assets/training-pouring.png" alt="Students measuring and pouring ingredients" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Collaborative baking" data-full="assets/training-mixer-blue.png"><img src="assets/training-mixer-blue.png" alt="Students collaborating around a prep table" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Precision citrus prep" data-full="assets/training-grating.png"><img src="assets/training-grating.png" alt="Students grating lemon zest in class" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Course dishes &amp; plating" data-full="assets/flyer-promo.png"><img src="assets/flyer-promo.png" alt="PPKS dishes including cake, bread, and plated chicken" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Kitchen &amp; food gallery" data-full="assets/flyer-courses.png"><img src="assets/flyer-courses.png" alt="PPKS kitchen training and food gallery" loading="lazy" /></button>
+            <!-- duplicate for seamless loop -->
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Chef-led pastry technique" data-full="assets/hero-training.png"><img src="assets/hero-training.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Small-class station work" data-full="assets/training-pouring.png"><img src="assets/training-pouring.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Collaborative baking" data-full="assets/training-mixer-blue.png"><img src="assets/training-mixer-blue.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Precision citrus prep" data-full="assets/training-grating.png"><img src="assets/training-grating.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Course dishes &amp; plating" data-full="assets/flyer-promo.png"><img src="assets/flyer-promo.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Kitchen &amp; food gallery" data-full="assets/flyer-courses.png"><img src="assets/flyer-courses.png" alt="" loading="lazy" /></button>
+          </div>
         </div>
+        <div class="marquee-row marquee-row--right">
+          <div class="marquee-track">
+            <button type="button" class="marquee-item" data-caption="Hands-on lemon zesting" data-full="assets/training-grating.png"><img src="assets/training-grating.png" alt="Culinary students zesting lemon" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Warnborough UK pathway" data-full="assets/flyer-promo.png"><img src="assets/flyer-promo.png" alt="PPKS diploma and SKM promotional gallery" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Real kitchen rhythm" data-full="assets/training-pouring.png"><img src="assets/training-pouring.png" alt="Students at stainless steel station" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Instructor supervision" data-full="assets/hero-training.png"><img src="assets/hero-training.png" alt="Instructor and students at the bench" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="SKM &amp; culinary craft" data-full="assets/flyer-courses.png"><img src="assets/flyer-courses.png" alt="PPKS course flyer food and kitchen shots" loading="lazy" /></button>
+            <button type="button" class="marquee-item" data-caption="Team prep practice" data-full="assets/training-mixer-blue.png"><img src="assets/training-mixer-blue.png" alt="Students practicing baking prep together" loading="lazy" /></button>
+            <!-- duplicate -->
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Hands-on lemon zesting" data-full="assets/training-grating.png"><img src="assets/training-grating.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Warnborough UK pathway" data-full="assets/flyer-promo.png"><img src="assets/flyer-promo.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Real kitchen rhythm" data-full="assets/training-pouring.png"><img src="assets/training-pouring.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Instructor supervision" data-full="assets/hero-training.png"><img src="assets/hero-training.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="SKM &amp; culinary craft" data-full="assets/flyer-courses.png"><img src="assets/flyer-courses.png" alt="" loading="lazy" /></button>
+            <button type="button" class="marquee-item" aria-hidden="true" tabindex="-1" data-caption="Team prep practice" data-full="assets/training-mixer-blue.png"><img src="assets/training-mixer-blue.png" alt="" loading="lazy" /></button>
+          </div>
+        </div>
+      </div>
 
-        <div class="gallery-actions reveal">
-          <a class="btn btn-outline magnetic" href="https://www.tiktok.com/@ppks.official" target="_blank" rel="noopener noreferrer">Watch more on TikTok</a>
-          <a class="btn btn-wa btn-sm magnetic" id="galleryWa" href="#">WhatsApp us</a>
-        </div>
+      <div class="gallery-actions reveal">
+        <a class="btn btn-outline magnetic" href="https://www.tiktok.com/@ppks.official" target="_blank" rel="noopener noreferrer">Watch more on TikTok @ppks.official</a>
+        <a class="btn btn-wa btn-sm magnetic" id="galleryWa" href="#">WhatsApp us</a>
       </div>
     </section>
 
@@ -1106,6 +1319,12 @@
   <a class="float-wa magnetic" id="floatWa" href="#" aria-label="Chat on WhatsApp">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11 11 0 0 0 2.4 17.2L1.5 22.5l5.4-.9A11 11 0 0 0 20.5 3.5zm-8.5 17a9 9 0 0 1-4.6-1.3l-.3-.2-3.2.5.5-3.1-.2-.3a9 9 0 1 1 7.8 4.4zm5-6.7c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a7.4 7.4 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5s0-.4 0-.5-.6-1.5-.8-2-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.3a2.4 2.4 0 0 0-.8 1.8c0 1.1.8 2.1.9 2.3a9.4 9.4 0 0 0 3.6 3.5c.5.2.9.4 1.2.5.5.2 1 .2 1.3.1.4-.1 1.6-.7 1.8-1.3s.2-1.2.2-1.3-.2-.2-.5-.3z"/></svg>
   </a>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged photo" hidden>
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+    <img id="lightboxImg" src="" alt="" />
+    <p class="lightbox-caption" id="lightboxCaption"></p>
+  </div>
 
   <!-- AI Chatbot -->
   <button class="chat-fab magnetic" id="chatFab" type="button" aria-expanded="false" aria-controls="chatPanel">ASK AI</button>
@@ -1330,7 +1549,7 @@ Style: warm, concise, professional culinary-school voice. Prefer short answers. 
         }
         requestAnimationFrame(tickCursor);
 
-        document.querySelectorAll("a, button, .course-card, .gallery-item, input, select, textarea").forEach(function (el) {
+        document.querySelectorAll("a, button, .course-card, .marquee-item, input, select, textarea").forEach(function (el) {
           el.addEventListener("mouseenter", function () { document.body.classList.add("cursor-hover"); });
           el.addEventListener("mouseleave", function () { document.body.classList.remove("cursor-hover"); });
         });
@@ -1363,6 +1582,68 @@ Style: warm, concise, professional culinary-school voice. Prefer short answers. 
           });
         });
       }
+
+      /* Hero auto slideshow */
+      (function () {
+        var slides = Array.prototype.slice.call(document.querySelectorAll(".hero-slide"));
+        var dotsWrap = document.getElementById("heroDots");
+        if (slides.length < 2) return;
+        var idx = 0;
+        var timer = null;
+        slides.forEach(function (_, i) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.setAttribute("aria-label", "Show photo " + (i + 1));
+          if (i === 0) b.classList.add("is-active");
+          b.addEventListener("click", function () { go(i); restart(); });
+          dotsWrap.appendChild(b);
+        });
+        var dots = Array.prototype.slice.call(dotsWrap.querySelectorAll("button"));
+        function go(n) {
+          idx = (n + slides.length) % slides.length;
+          slides.forEach(function (s, i) { s.classList.toggle("is-active", i === idx); });
+          dots.forEach(function (d, i) { d.classList.toggle("is-active", i === idx); });
+        }
+        function next() { go(idx + 1); }
+        function restart() {
+          if (timer) clearInterval(timer);
+          if (!reduceMotion) timer = setInterval(next, 5200);
+        }
+        restart();
+      })();
+
+      /* Lightbox for marquee */
+      (function () {
+        var box = document.getElementById("lightbox");
+        var img = document.getElementById("lightboxImg");
+        var cap = document.getElementById("lightboxCaption");
+        var closeBtn = document.getElementById("lightboxClose");
+        function openLb(src, caption, alt) {
+          img.src = src;
+          img.alt = alt || caption || "";
+          cap.textContent = caption || "";
+          box.hidden = false;
+          box.classList.add("open");
+          document.body.style.overflow = "hidden";
+          closeBtn.focus();
+        }
+        function closeLb() {
+          box.classList.remove("open");
+          box.hidden = true;
+          img.src = "";
+          document.body.style.overflow = "";
+        }
+        document.querySelectorAll(".marquee-item").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            openLb(btn.getAttribute("data-full") || btn.querySelector("img").src, btn.getAttribute("data-caption") || "", (btn.querySelector("img") || {}).alt);
+          });
+        });
+        closeBtn.addEventListener("click", closeLb);
+        box.addEventListener("click", function (e) { if (e.target === box) closeLb(); });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && box.classList.contains("open")) closeLb();
+        });
+      })();
 
       /* ===== AI Chatbot (OpenRouter) ===== */
       var chatFab = document.getElementById("chatFab");
